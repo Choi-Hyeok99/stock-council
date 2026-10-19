@@ -1,0 +1,113 @@
+server:
+  address: 127.0.0.1
+  port: 8090
+  # Serve terminates HTTPS on this Mac; only its loopback hop may supply forwarding data.
+  forward-headers-strategy: native
+  max-http-request-header-size: 8KB
+  tomcat:
+    max-http-form-post-size: 8KB
+    max-swallow-size: 1MB
+    redirect-context-root: false
+    remoteip:
+      internal-proxies: '127.0.0.1/32,::1/128'
+      protocol-header: X-Forwarded-Proto
+      remote-ip-header: X-Forwarded-For
+      # Serve preserves Host. Ignore client-supplied forwarded host/port values.
+      host-header: ''
+      port-header: ''
+  servlet:
+    session:
+      timeout: 30m
+      cookie:
+        http-only: true
+        same-site: strict
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+
+spring:
+  http:
+    converters:
+      # Preserve stored JsonNode/record representations while using patched Spring 7.
+      preferred-json-mapper: jackson2
+  config:
+    import:
+      - file:.env.db[.properties]
+      - optional:file:.env.kis[.properties]
+      - optional:file:.env.login[.properties]
+      - optional:file:.env.kis-live[.properties]
+  application:
+    name: capital-preservation-trader
+  servlet:
+    multipart:
+      enabled: false
+  task:
+    scheduling:
+      pool:
+        size: 6
+  security:
+    user:
+      name: ${APP_LOGIN_USERNAME:user}
+      password: ${APP_LOGIN_PASSWORD:}
+  profiles:
+    active: paper
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5433/papertrader
+    username: papertrader
+    password: ${DB_PASSWORD}
+  flyway:
+    enabled: true
+
+kis:
+  collection-interval-ms: 60000
+  index-interval-ms: 30000
+  probe-interval-ms: 120000
+  app-key: ${KIS_APP_KEY:}
+  app-secret: ${KIS_APP_SECRET:}
+universe:
+  refresh-interval-ms: 300000
+
+execution:
+  environment: ${TRADING_ENVIRONMENT:PAPER}
+  # Historical screening metadata; writes are limited to owner-confirmed PAPER sales and cancellations.
+  paper-news-observation: ${PAPER_NEWS_OBSERVATION:true}
+
+reports:
+  morning: "08:30"
+  midday: "12:00"
+  close: "15:40"
+
+discord:
+  enabled: ${DISCORD_ENABLED:true}
+  report-slots: ${DISCORD_REPORT_SLOTS:MORNING}
+  progress-minutes: ${DISCORD_PROGRESS_MINUTES:5}
+
+paper:
+  costs:
+    # KIS BankIS KRX published standard tariff baseline (not a confirmation of this account's applied rate).
+    commission-rate: ${PAPER_COMMISSION_RATE:0.000140527}
+    transaction-tax-rate: ${PAPER_TRANSACTION_TAX_RATE:0.0020}
+    # Illustrative 5 bps adverse price-cost assumption; replace with calibrated account/market assumptions.
+    slippage-bps: ${PAPER_SLIPPAGE_BPS:5}
+    profile: ${PAPER_COST_PROFILE:KIS_BANKIS_KRX_ESTIMATE_2025-10-27}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+portfolio:
+  paper-budget: ${PAPER_PORTFOLIO_BUDGET:10000000}
+  paper-position-limit: ${PAPER_POSITION_LIMIT:5000000}
+  paper-max-positions: ${PAPER_MAX_POSITIONS:5}
+  # Retained for configuration compatibility; PAPER expected-loss sizing is disabled by owner.
+  paper-max-expected-loss: ${PAPER_MAX_EXPECTED_LOSS:100000}
+  paper-day-realized-loss-limit: ${PAPER_DAY_REALIZED_LOSS_LIMIT:200000}
+information:
+  poll-ms: ${INFORMATION_POLL_MS:120000}

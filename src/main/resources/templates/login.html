@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>투자 실험 로그인</title><link rel="stylesheet" href="/css/dashboard.css"></head>
+<body><main class="login-page"><section class="card journal-panel">
+  <h1>투자 실험</h1><p class="subtitle">개인 모의투자 대시보드</p>
+  <p class="journal-note" th:if="${param.error}">로그인 정보를 확인해 주세요. 반복 실패하면 10분 후 다시 시도할 수 있어요.</p>
+  <p class="journal-note" th:if="${param.logout}">로그아웃했어요.</p>
+  <form th:action="@{/login}" method="post" class="login-fields">
+    <label>아이디<input name="username" autocomplete="username" required autofocus maxlength="100"></label>
+    <label>비밀번호<input name="password" type="password" autocomplete="current-password" required maxlength="256"></label>
+    <button class="small-button" type="submit">로그인</button>
+  </form>
+</section></main></body></html>

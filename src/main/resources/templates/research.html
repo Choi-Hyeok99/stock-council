@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>교육 기준·과거 보고서</title><link rel="stylesheet" href="/css/dashboard.css"><link rel="stylesheet" href="/css/site-navigation.css"></head>
+<body><main>
+<header><div class="brand">교육 기준·과거 보고서</div><a class="source-link" href="/">대시보드</a></header>
+<section class="intro"><h1>원칙부터, 차근차근</h1><p class="subtitle">공식 공개 자료를 참고한 쉬운 설명과 실제 관찰 기록이에요.</p>
+<nav class="quick-links"><a href="/overview">운영 한눈에</a><a href="/committee">기업 분석</a><a href="/philosophy">버크셔 기업 검토</a><a href="#daily-reports">정기 보고</a><a href="/committee">투자위원회</a><a href="/committee">기업 후보</a><a href="#readiness">학습 준비</a><a href="#roles">봇별 기준</a><a href="#glossary">쉬운 용어집</a><a href="#sources">공식 출처</a></nav></section>
+<section id="daily-reports"><div class="section-head"><h2>과거 거래 보고서 보관</h2></div>
+<div class="card journal-panel"><p class="reason">이 화면은 전환 전 보고서와 교육 기준을 보관해요. 새로운 기업 연구 요약은 수집 현황 화면에서 확인하세요.</p>
+<div class="checks"><span class="check" th:each="slot : ${reports.schedule}" th:text="${slot.time + ' KST · ' + slot.title}"></span></div>
+<p class="hint">아래 예약 시간과 수치는 과거 보고 방식이에요. 현재 자동매매나 계좌 대조가 진행된다는 뜻이 아니에요.</p>
+<p class="journal-note" th:if="${reports.issue != null}" th:text="${reports.issue}"></p>
+<p id="report-live-status" class="hint">과거 보고서 목록</p><div id="report-live-link" class="report-links"></div>
+<p th:if="${#lists.isEmpty(reports.history.items)}" class="hint">저장된 과거 보고서가 없어요.</p>
+<article class="study-item" th:each="entry : ${reports.history.items}">
+<strong th:text="${entry.reportDate + ' · ' + (entry.slot == 'MORNING' ? '장 시작 전' : entry.slot == 'MIDDAY' ? '점심 점검' : '장 마감 후')}"></strong>
+<p class="hint" th:text="${entry.timing == 'ON_TIME' ? '예약 후 5분 이내 작성' : '지연 작성 · 작성 시각의 상태'}"></p>
+<div class="report-links"><a th:href="@{/reports/{id}(id=${entry.id})}">보고서 읽기</a><a th:href="@{/reports/{id}.md(id=${entry.id})}">Markdown 다운로드</a></div>
+</article>
+<a class="source-link" th:if="${reports.history.hasMore}" th:href="@{/research(before=${reports.history.items[reports.history.items.size()-1].id})}">이전 보고서 더 보기</a></div></section>
+<section id="readiness"><div class="section-head"><h2>학습 준비 상태</h2><span class="state">데이터 수집 단계</span></div>
+<div class="card journal-panel"><div class="feed-times">
+<div><span class="stat-label">실제 장중 관찰 일수</span><strong class="stat-value" th:text="${learning.observationDays + '일'}"></strong></div>
+<div><span class="stat-label">시각 확인 시세 표본</span><strong class="stat-value" th:text="${learning.freshQuoteSamples + '개'}"></strong></div>
+<div><span class="stat-label">확정 일봉 날짜 / 종목</span><strong class="stat-value" th:text="${learning.stockHistoryDays + '일 / ' + learning.historyInstruments + '개'}"></strong></div>
+<div><span class="stat-label">종료 거래 / 손익 표본</span><strong class="stat-value" th:text="${learning.closedTrades + '건 / ' + learning.labeledTrades + '개'}"></strong></div></div>
+<p class="journal-note">교육 기준은 매번 판단 전에 참고하고 회의록에 점검 결과를 남겨요. 모델 훈련·강화학습·자동 전략 변경은 아직 실행하지 않아요.</p>
+<ul class="journal-blockers"><li th:each="note : ${learning.limitations}" th:text="${note}"></li></ul></div></section>
+<section id="roles"><div class="section-head"><h2>각 봇이 먼저 확인할 것</h2></div><div class="report-grid">
+<article class="card study-item" th:each="role : ${curriculum.roles}"><h3 th:text="${role.name + ' · ' + role.purpose}"></h3><p th:text="${role.instruction}"></p><p class="hint" th:text="${'배울 용어: ' + #strings.listJoin(role.termNames, ', ')}"></p><p class="hint" th:text="${'적용 기준: ' + #strings.listJoin(role.principleIds, ', ')}"></p></article></div></section>
+<section id="principles"><div class="section-head"><h2>원칙을 우리 시스템에 적용하기</h2></div><div class="report-grid">
+<article class="card study-item" th:each="principle : ${curriculum.principles}"><h3 th:text="${principle.title}"></h3><p class="hint" th:text="${principle.attribution + ' · ' + principle.id}"></p><p th:text="${principle.application}"></p><p class="journal-note" th:text="${principle.limitation}"></p><p class="hint" th:text="${'출처: ' + #strings.listJoin(principle.sourceIds, ', ')}"></p></article></div></section>
+<section id="glossary"><div class="section-head"><h2>쉽게 읽는 투자 용어 26개</h2></div>
+<details class="card journal-panel mt-12" th:each="level : ${levels}" th:open="${level.key == 'BASIC'}"><summary th:text="${levelNames[level.key]}"></summary>
+<article class="study-item" th:each="term : ${level.value}"><h3 th:text="${term.name}"></h3><p th:text="${term.explanation}"></p></article></details></section>
+<section id="sources"><div class="section-head"><h2>공식 공개 출처</h2><span class="hint" th:text="${curriculum.reviewedAt + ' 검토'}"></span></div>
+<div class="card journal-panel"><p class="hint">아래 자료의 짧은 요약과 프로젝트의 적용 기준이에요. 커뮤니티·익명 추천·비공개 운용 자료는 입력하지 않아요. 유명 투자자의 원칙이 이 봇의 수익성을 증명하지는 않아요.</p>
+<article class="study-item" th:each="source : ${curriculum.sources}"><a class="source-link" th:href="${source.url}" target="_blank" rel="noopener noreferrer" th:text="${source.id + ' · ' + source.publisher + ' · ' + source.title}"></a><p class="hint" th:text="${source.scope}"></p></article></div></section>
+<footer th:text="${curriculum.version + ' · 원칙 참고 및 규칙 점검 단계'}"></footer>
+</main><script src="/js/site-navigation.js" defer></script></body></html>

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 비용 · 내 투자</title><link rel="stylesheet" href="/css/ideas.css"><link rel="stylesheet" href="/css/ai-costs.css?v=20261015"><link rel="stylesheet" href="/css/site-navigation.css"></head>
+<body><main>
+<header class="topbar"><a class="brand" href="/ai-costs"><span class="brand-dot"></span>AI 비용</a><nav aria-label="주요 화면"><a href="/committee">투자위원회</a><a href="/orders">보유·주문</a><a href="/overview">운영 현황</a></nav></header>
+<section class="hero"><p class="eyebrow">월 $10 안에서 짧게 검토해요</p><h1>AI가 얼마나 썼나요?</h1><p class="intro">이번 달 사용 비용과 남은 호출 예산을 한눈에 봐요.</p><div class="status-row"><span id="cost-mode" class="pill muted">연결 상태 확인 중</span><span class="pill muted">앱 토큰 사용량 기준 · 청구액 아님</span></div><p id="cost-checked" class="small" aria-live="polite">사용 기록 조회 중</p></section>
+<p id="cost-error" class="notice" role="status" hidden></p>
+<section class="panel" aria-labelledby="budget-heading"><div class="section-title"><h2 id="budget-heading">이번 달 AI 예산</h2><button id="cost-refresh" class="secondary" type="button">새로고침</button></div>
+<div class="cost-metrics"><div><span>사용 비용 · 토큰 기준 추정</span><strong id="cost-spent">—</strong></div><div><span>추가 호출에 남은 예산</span><strong id="cost-remaining">—</strong></div><div><span>이번 달 앱 한도</span><strong id="cost-limit">—</strong></div><div><span>처리 중·미확정 예약액</span><strong id="cost-reserved">—</strong></div></div>
+<progress id="cost-progress" value="0" max="100" aria-label="월 예산 사용과 예약 비율"></progress><p id="cost-budget-note" class="small"></p>
+<p id="cost-calculation" class="scope-note"></p><p class="small">1달러 = 100센트. 작은 금액은 ‘1센트 미만’으로 표시하고 원본 계산은 유지해요.</p>
+</section>
+<section class="panel today-panel"><h2>오늘은</h2><div class="today-grid"><div><span>오늘 사용 비용</span><strong id="cost-today">—</strong></div><div><span>오늘 전송한 API 요청</span><strong id="cost-calls">—</strong></div><div><span>이번 달 확인된 토큰</span><strong id="cost-tokens">—</strong></div></div><p id="cost-count-note" class="small"></p></section>
+<section class="panel provider-panel"><h2>OpenAI 결제 화면과 비교</h2><p id="provider-note" class="scope-note"></p><div class="today-grid"><div><span>공식 프로젝트 비용</span><strong>자동 조회 미연결</strong></div><div><span>충전 크레딧 잔액</span><strong>자동 조회 미연결</strong></div></div><p class="small">앱의 남은 예산을 결제 잔액으로 표시하지 않아요. 플랫폼 확인이 필요하면 아래에서 볼 수 있어요.</p><div class="external-links"><a href="https://platform.openai.com/usage" target="_blank" rel="noopener noreferrer">OpenAI 사용량 보기 ↗</a><a href="https://platform.openai.com/settings/organization/billing/overview" target="_blank" rel="noopener noreferrer">충전 잔액 보기 ↗</a><a href="https://platform.openai.com/settings/" target="_blank" rel="noopener noreferrer">프로젝트 한도 보기 ↗</a></div></section>
+<section><div class="section-title"><h2>모델별 사용</h2><span class="small">이번 달 · 앱에 저장된 기록</span></div><div id="cost-models" class="model-grid"><p class="small">조회 중</p></div></section>
+<section class="panel today-panel"><h2>최근 날짜별 비용</h2><p class="small">이번 달 중 기록이 있는 최근 14일 · 요청 예약일을 한국 시각으로 묶었어요.</p><div id="cost-days" class="day-list"></div></section>
+<details class="panel call-panel"><summary>최근 호출 20개 · 상태와 토큰</summary><p class="small">요청 한 번과 기업 회의 한 번은 달라요. 전체 회의는 기본 17개 요청이에요.</p><div id="cost-recent" class="call-list"></div></details>
+<footer>화면 조회는 저장된 기록만 읽어요. 새 AI 호출이나 주문을 시작하지 않아요.<br><a href="/guide/committee">AI 운영·비용 기준</a></footer>
+</main><script src="/js/ai-costs.js?v=20261015" defer></script><script src="/js/site-navigation.js" defer></script></body></html>
